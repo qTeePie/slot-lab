@@ -11,7 +11,21 @@ contract StorageLab {
                 // pushes value from storage onto stack
                 let retrieved := sload(0x00)
                 // pops retrieved + code of stack, pushes sum on stack
-                let sum := add(retrieved, code)
+                let result := add(retrieved, code)
+                sstore(0x00, result)
+            }
+        } else if (code >= 100 && code < 200) {
+            assembly {
+                let retrieved := sload(0x00)
+                let subtracted := sub(code, 99)
+
+                let result := div(retrieved, subtracted)
+                sstore(0x00, result)
+            }
+        } else if (code >= 200 && code < 300) {
+            assembly {
+                // reset value
+                sstore(0x00, 0)
             }
         }
     }
