@@ -50,6 +50,50 @@ Finally, it pushes that 32-byte word (the data it just fetched) back onto the st
 
 _it_ being the EVM.
 
+### MSTORE 0x52
+
+Save word to memory.
+
+**Number of items**
+Popped from the stack: 2
+Pushed onto the stack: 0
+
+> The top of the stack before running MSTORE μₛ[0]
+> represents the memory offset (address) at which a word will be stored.
+> The next item on the stack μₛ[1] represents the 32-byte word to be written.
+> After execution, memory μₘ from μₛ[0] through μₛ[0] + 31
+> will contain the bytes of μₛ[1],
+> i.e.
+> μ′ₘ[μₛ[0] … (μₛ[0] + 31)] ≡ μₛ[1].
+>
+> The memory size counter μᵢ is then updated to
+> μ′ᵢ ≡ max(μᵢ, ⌈(μₛ[0] + 32) ÷ 32⌉).
+
+**Simpler:**
+
+This:
+
+```
+assembly {
+mstore(0x40, 0x80)
+}
+```
+
+Tells the EVM:
+
+_“take 0x80 (the value) and drop it into memory starting at offset 0x40.”_
+
+```
+μs[0] = 0x40 → where to store (offset)
+μs[1] = 0x80 → what to store (value)
+```
+
+So after execution, memory looks like:
+
+```
+ memory[0x40..0x5F] = 0x000...00080 (32 bytes total)
+```
+
 ---
 
 ## STORAGE

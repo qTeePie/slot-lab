@@ -7,7 +7,7 @@ And yes — it’s completely **per call** (wiped clean every time).
 
 ---
 
-### 🧩 Step 2 — The _“free memory pointer”_
+### 🧩 Step 2 — The “free memory pointer”
 
 Solidity keeps a special 32-byte word at **address `0x40`**.
 That’s where it stores the **next free memory slot** —
