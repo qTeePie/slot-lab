@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.29;
+pragma solidity ^0.8.30;
 
 import "../lib/forge-std/src/Test.sol";
-import "../experiments/StorageLab.sol";
+import "../solidity/experiments/StorageLab.sol";
 
 contract StorageLabTest is Test {
     StorageLab lab;
