@@ -2,7 +2,7 @@
 pragma solidity ^0.8.30;
 
 import "../lib/forge-std/src/Test.sol";
-import "../solidity/experiments/StorageLab.sol";
+import "../solidity/StorageLab.sol";
 
 contract StorageLabTest is Test {
     StorageLab lab;
