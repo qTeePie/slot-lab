@@ -26,15 +26,15 @@ contract Mini721 {
     // -----------------------
     // MINT
     // -----------------------
-    function mint(address to, uint256 id) public {
-        require(to != address(0));
-        require(_owners[id] == address(0));
+    function mint(address to) public {
+        require(to != address(0), "invalid address");
 
-        _owners[id] = to;
-        _balances[to] += 1;
-        totalSupply += 1;
+        uint256 id = totalSupply; // auto assign next tokenId
+        _owners[id] = to; // record ownership
+        _balances[to] += 1; // increment their balance
+        totalSupply += 1; // increment supply
 
-        emit Transfer(address(0), to, id);
+        emit Transfer(address(0), to, id); // emit standard event
     }
 
     // -----------------------
@@ -50,13 +50,6 @@ contract Mini721 {
         _balances[to] += 1;
 
         emit Transfer(from, to, id);
-    }
-
-    // -----------------------
-    // VIEWS
-    // -----------------------
-    function ownerOf(uint256 id) public view returns (address) {
-        return _owners[id];
     }
 
     function balanceOf(address owner) public view returns (uint256) {
