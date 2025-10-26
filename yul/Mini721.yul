@@ -1,10 +1,6 @@
-// ❕ note: this implementation favors gas savings over full ERC-721 compatibility.
-
-// ❗ TODO: bitpack totalSupply etc etc and see if its possible to utilize the whole 32 byte word loaded in selector() (just for the heck of it, its a demo)
-// ❗ TODO: i want modes for nft so ill do a mode bitpacked with the 256-bit storage slot
-//  [  1 bit   |      95 bits empty     |   160 bits address   ] - in the mapping (address is only 160 bits)
-
 /*
+  ❕ Note: this implementation favors gas savings over full ERC-721 compatibility.
+
   To-the-bone minimal nft implemented in yul (evm ecducational lab, not commercial)
 
   - Free-mint NFT.
@@ -23,15 +19,19 @@
   Reason: slight gas improvement 
 */
 
+// ❗ TODO: bitpack totalSupply etc etc and see if its possible to utilize the whole 32 byte word loaded in selector() (just for the heck of it, its a demo)
+// ❗ TODO: i want modes for nft so ill do a mode bitpacked with the 256-bit storage slot
+//  [  1 bit   |      95 bits empty     |   160 bits address   ] - in the mapping (address is only 160 bits)
+
 object "Mini721" {
   // top `code` block is the constructor for Mini721
 
-  // the constructor copies its runtime bytecode into memory and returns this segment 
-  // to the EVM where its hashed and saved to the `World State` as this contract / account object's `codeHash`.
+  // the constructor copies `runtime` bytecode into memory and returns this memory segment to the EVM 
+  // EVM hashes bytecode and saves hash as account object's `codeHash` in the World State
     
-  // this codeHash works as a pointer to the actual bytecode which is stored separately from the main execution layer
-  // to some read-only "code database" hosted on each node.
-
+  // the actual bytecode is stored in some read-only "code database" hosted on each node seperate from main execution layer
+  // the hash works as a pointer to where the bytecode is stored
+  
   code {
     // saves the contract creator (deployer) as the initial owner
     sstore(0x00, caller())  
@@ -42,13 +42,12 @@ object "Mini721" {
     return(0x00, datasize("runtime"))
   }
 
-  // the contract’s on-chain bytecode
+  // contract’s on-chain bytecode
   object "runtime" {
     code {
 
       // dispatcher
       switch selector() 
-      // calldata layout: [4-byte selector][32-byte address]
       case 0x40c10f19 /* mint(address, uint256) */ {
 
       }
@@ -56,7 +55,7 @@ object "Mini721" {
         revert(0x00, 0x00) /* no match */
       }
 
-      // --- mint and transfer ---
+      // --- external interactions ---
       function mint() {
         // calldataload(4) to load at selector-offset
         // address is 160 bits => right shift 96 bits
