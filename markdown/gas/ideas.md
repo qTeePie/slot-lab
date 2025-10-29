@@ -1,8 +1,14 @@
-### 🧪 runtime vs creation — loop test idea
+### 🧪 slicing bytearray gas-test idea
 
 ```solidity
-assembly {
-assembly {
+{
+    (...)
+
+    function sliceByteArr(bytes memory creation){
+        bytes memory runtime;
+        uint256 pos = bytePosition(creation, bytes1(0xf3));
+
+        assembly {
             // first 32 bytes is creation's size
             let crSize := mload(creation)
             let crPtr := add(creation, 0x20) // skips size
@@ -30,6 +36,38 @@ assembly {
             // update 0x40 to hold next available slot
             mstore(0x40, add(dest, and(add(runSize, 0x3f), not(0x1f))))
         }
+    }
+
+ function bytePosition(bytes memory bc, bytes1 marker) internal pure returns (uint256) {
+        uint256 offset;
+        uint256 len = bc.length;
+
+        for (uint256 i; i < len; i++) {
+            if (bc[i] == marker) {
+                offset = i;
+                break;
+            }
+        }
+
+        return offset;
+    }
+}
+```
+
+**_VS HIGH LEVEL_**
+
+```solidity
+{
+    (...)
+
+    function sliceByteArr(bytes memory creation){
+        uint256 pos = bytePosition(creation, bytes1(0xf3));
+        bytes memory runtime = new bytes(creation.length - (pos + 1));
+
+        for (uint256 i = 0; i < runtime1.length; i++) {
+            runtime1[i] = creation[i + pos + 1];
+        }
+    }
 }
 ```
 
